@@ -10,15 +10,19 @@ import Cocoa
 
 class MSTile : NSObject
 {
-    override init() {
+    init(positionX: Int, positionY: Int) {
         self.isBomb = false
         self.isRevealed = false
         self.numberOfAdjacentBomb = 0
+        self.positionX = positionX
+        self.positionY = positionY
     }
     
     var isBomb: Bool
     var isRevealed: Bool
     var numberOfAdjacentBomb: Int
+    var positionX: Int
+    var positionY: Int
 }
 
 class MSGrid : NSObject
@@ -28,11 +32,11 @@ class MSGrid : NSObject
         self.numberOfRows = numberOfRows
         self.numberOfColumns = numberOfColumns
         self.tiles = [[MSTile]]()
-        for _ in 1...numberOfRows {
+        for i in 1...numberOfRows {
             var row = [MSTile]()
             self.tiles.append(row)
-            for _ in 1...numberOfColumns {
-                row.append(MSTile())
+            for j in 1...numberOfColumns {
+                row.append(MSTile(positionX: i, positionY: j))
             }
         }
     }
