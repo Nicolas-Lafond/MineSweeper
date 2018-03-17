@@ -38,6 +38,7 @@ class MSGrid : NSObject
     }
     
     func generateBombs(positionX: Int, positionY: Int) {
+        // There should be no bomb at the position given as argument to this function
         var randX: Int, randY: Int
         var numberOfBombs = 0
         while numberOfBombs < self.numberOfBombs {
@@ -49,6 +50,66 @@ class MSGrid : NSObject
                 numberOfBombs += 1
             }
         }
+    }
+    
+    func getTileAtPosition(positionX: Int, positionY: Int) -> MSTile {
+        // Note Tile at position (1,1) is the top left tile of the grid
+        return self.tiles[positionX - 1][positionY - 1]
+    }
+    
+    func getAdjacentTiles(positionX: Int, positionY: Int) -> [MSTile] {
+        var adjacentX: [Int] = [positionX]
+        if positionX > 0 { adjacentX.append(positionX - 1) }
+        if positionX < numberOfColumns - 1 { adjacentX.append(positionX + 1) }
+        var adjacentY: [Int] = [positionY]
+        if positionY > 0 { adjacentY.append(positionY - 1) }
+        if positionY < numberOfRows - 1 { adjacentY.append(positionY + 1) }
+        var adjacentPositions: [(Int, Int)] = []
+        for i in adjacentX {
+            for j in adjacentY {
+                if i != positionX || j != positionY {
+                    adjacentPositions.append((i, j))
+                }
+            }
+        }
+        
+        var adjacentTiles: [MSTile] = []
+        for (posX, posY) in adjacentPositions {
+            adjacentTiles.append(self.getTileAtPosition(positionX: posX, positionY: posY))
+        }
+        return adjacentTiles
+    }
+    
+    func generateNumbersOfAdjacentBombs() {
+        for i in 0...numberOfRows-1 {
+            for j in 0...numberOfColumns-1 {
+                let tile = self.getTileAtPosition(positionX: i, positionY: j)
+                if tile.isBomb {
+                    tile.numberOfAdjacentBomb = 0 // We don't care how many bombs are adjacent to a bomb tile
+                }
+                else {
+                    var numberOfAdjacentBombs = 0
+                    let adjacentTilesList = getAdjacentTiles(positionX: i, positionY: j)
+                    for tile in adjacentTilesList {
+                        if tile.isBomb {
+                            numberOfAdjacentBombs += 1
+                        }
+                    }
+                    tile.numberOfAdjacentBomb = numberOfAdjacentBombs
+                }
+            }
+        }
+    }
+    
+    func getNumberOfRemainingTilesToReveal() -> Int {
+        let numberOfTiles = self.numberOfRows * self.numberOfColumns
+        var numberOfRevealedTiles = 0
+        for row in self.tiles {
+            for tile in row {
+                if tile.isRevealed && !tile.isBomb { numberOfRevealedTiles += 1 }
+            }
+        }
+        return numberOfTiles - numberOfRevealedTiles - self.numberOfBombs
     }
     
     var tiles: [[MSTile]]
