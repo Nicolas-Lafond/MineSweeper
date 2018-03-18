@@ -15,12 +15,32 @@ var bombsAreSet = false
 
 class MSButton: NSButton
 {
+    override func mouseDown(with event: NSEvent) {
+        if !(self.tile?.isFlagged)! {
+            super.mouseDown(with: event)
+        }
+    }
+    
+    override func rightMouseDown(with event: NSEvent) {
+        if (self.tile?.isRevealed)! {
+            return
+        }
+        else if (self.tile?.isFlagged)! {
+            self.image = nil
+            self.tile?.isFlagged = false
+        }
+        else {
+            self.image = NSImage.init(named: NSImage.Name(rawValue: "flag"))
+            self.tile?.isFlagged = true
+        }
+        
+    }
+    
     var tile: MSTile?
 }
 
 class ViewController: NSViewController
 {
-
     var modelGrid: MSGrid?
     
     override func viewDidLoad() {
@@ -58,21 +78,23 @@ class ViewController: NSViewController
         // Update the view, if already loaded.
         }
     }
-
+    
     @IBAction func clicButton(_ sender: MSButton) {
         let tile = sender.tile
-        if !bombsAreSet {
-            bombsAreSet = true
-            self.modelGrid?.generateBombs(positionX: tile!.positionX, positionY: tile!.positionY)
-            self.modelGrid?.generateNumbersOfAdjacentBombs()
-        }        
-        if tile!.isBomb {
-            sender.title = "B"
-        }
-        else {
-            sender.title = String.init(format: "%d", tile!.numberOfAdjacentBomb)
+        if !(tile?.isFlagged)! {
+            if !bombsAreSet {
+                bombsAreSet = true
+                self.modelGrid?.generateBombs(positionX: tile!.positionX, positionY: tile!.positionY)
+                self.modelGrid?.generateNumbersOfAdjacentBombs()
+            }
+            if (tile?.isBomb)! {
+                sender.title = "B"
+            }
+            else {
+                sender.title = String.init(format: "%d", tile!.numberOfAdjacentBomb)
+                sender.tile?.isRevealed = true
+            }
         }
     }
-    
 }
 

@@ -20,6 +20,7 @@ class MSTile : NSObject
     
     var isBomb: Bool
     var isRevealed: Bool
+    var isFlagged = false
     var numberOfAdjacentBomb: Int
     var positionX: Int
     var positionY: Int
