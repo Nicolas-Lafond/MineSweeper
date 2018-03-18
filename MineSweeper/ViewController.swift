@@ -13,6 +13,11 @@ let numberOfColumns = 20
 let numberOfBombs = 30
 var bombsAreSet = false
 
+class MSButton: NSButton
+{
+    var tile: MSTile?
+}
+
 class ViewController: NSViewController
 {
 
@@ -29,14 +34,15 @@ class ViewController: NSViewController
         // Create the buttons grid
         let gridView: NSGridView = self.view as! NSGridView
         for i in 1...numberOfRows {
-            var columnButtons: [NSButton] = []
+            var columnButtons: [MSButton] = []
             for j in 1...numberOfColumns {
-                let button = NSButton()
+                let button = MSButton()
                 button.title = ""
+                button.target = self
                 button.action = #selector(ViewController.clicButton(_:))
                 button.addConstraint(NSLayoutConstraint.init(item: button, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 20.0))
                 button.addConstraint(NSLayoutConstraint.init(item: button, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 20.0))
-                button.objectValue = self.modelGrid?.getTileAtPosition(positionX: i, positionY: j)
+                button.tile = self.modelGrid?.getTileAtPosition(positionX: i, positionY: j)
                 columnButtons.append(button)
             }
             gridView.addRow(with: columnButtons)
@@ -53,8 +59,8 @@ class ViewController: NSViewController
         }
     }
 
-    @IBAction func clicButton(_ sender: NSButton) {
-        let tile = sender.objectValue as? MSTile
+    @IBAction func clicButton(_ sender: MSButton) {
+        let tile = sender.tile
         if !bombsAreSet {
             bombsAreSet = true
             self.modelGrid?.generateBombs(positionX: tile!.positionX, positionY: tile!.positionY)
@@ -64,7 +70,7 @@ class ViewController: NSViewController
             sender.title = "B"
         }
         else {
-            sender.title = String(describing: tile?.numberOfAdjacentBomb)
+            sender.title = String.init(format: "%d", tile!.numberOfAdjacentBomb)
         }
     }
     

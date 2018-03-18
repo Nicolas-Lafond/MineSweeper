@@ -34,10 +34,10 @@ class MSGrid : NSObject
         self.tiles = [[MSTile]]()
         for i in 1...numberOfRows {
             var row = [MSTile]()
-            self.tiles.append(row)
             for j in 1...numberOfColumns {
                 row.append(MSTile(positionX: i, positionY: j))
             }
+            self.tiles.append(row)
         }
     }
     
@@ -63,11 +63,11 @@ class MSGrid : NSObject
     
     func getAdjacentTiles(positionX: Int, positionY: Int) -> [MSTile] {
         var adjacentX: [Int] = [positionX]
-        if positionX > 0 { adjacentX.append(positionX - 1) }
-        if positionX < numberOfColumns - 1 { adjacentX.append(positionX + 1) }
+        if positionX > 1 { adjacentX.append(positionX - 1) }
+        if positionX < numberOfColumns { adjacentX.append(positionX + 1) }
         var adjacentY: [Int] = [positionY]
-        if positionY > 0 { adjacentY.append(positionY - 1) }
-        if positionY < numberOfRows - 1 { adjacentY.append(positionY + 1) }
+        if positionY > 1 { adjacentY.append(positionY - 1) }
+        if positionY < numberOfRows { adjacentY.append(positionY + 1) }
         var adjacentPositions: [(Int, Int)] = []
         for i in adjacentX {
             for j in adjacentY {
@@ -85,8 +85,8 @@ class MSGrid : NSObject
     }
     
     func generateNumbersOfAdjacentBombs() {
-        for i in 0...numberOfRows-1 {
-            for j in 0...numberOfColumns-1 {
+        for i in 1...numberOfRows {
+            for j in 1...numberOfColumns {
                 let tile = self.getTileAtPosition(positionX: i, positionY: j)
                 if tile.isBomb {
                     tile.numberOfAdjacentBomb = 0 // We don't care how many bombs are adjacent to a bomb tile
