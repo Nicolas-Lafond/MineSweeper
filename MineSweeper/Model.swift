@@ -71,11 +71,12 @@ class MSGrid : NSObject
         var randX: Int, randY: Int
         var numberOfBombs = 0
         while numberOfBombs < self.numberOfBombs {
-            randX = Int(arc4random_uniform(UInt32(self.numberOfColumns)))
-            randY = Int(arc4random_uniform(UInt32(self.numberOfRows)))
+            randX = Int(arc4random_uniform(UInt32(self.numberOfColumns))) + 1
+            randY = Int(arc4random_uniform(UInt32(self.numberOfRows))) + 1
+            let randTile = self.getTileAtPosition(positionX: randX, positionY: randY)
             let isNotSamePosition = (randX != positionX || randY != positionY);
-            if isNotSamePosition && !self.tiles[randX][randY].isBomb {
-                self.tiles[randX][randY].isBomb = true
+            if isNotSamePosition && !randTile.isBomb {
+                randTile.isBomb = true
                 numberOfBombs += 1
             }
         }
