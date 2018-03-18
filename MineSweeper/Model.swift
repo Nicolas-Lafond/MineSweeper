@@ -117,6 +117,18 @@ class MSGrid : NSObject
         return numberOfTiles - numberOfRevealedTiles - self.numberOfBombs
     }
     
+    func revealTile(tile: MSTile?) {
+        tile?.isRevealed = true
+        if tile != nil && tile?.numberOfAdjacentBomb == 0 {
+            let adjacentTiles = self.getAdjacentTiles(positionX: (tile?.positionX)!, positionY: (tile?.positionY)!)
+            for adjacentTile in adjacentTiles {
+                if (!adjacentTile.isRevealed) {
+                    self.revealTile(tile: adjacentTile)
+                }
+            }
+        }
+    }
+    
     var tiles: [[MSTile]]
     let numberOfBombs: Int
     let numberOfRows: Int

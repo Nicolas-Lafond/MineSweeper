@@ -62,7 +62,8 @@ class ViewController: NSViewController
                 button.action = #selector(ViewController.clicButton(_:))
                 button.addConstraint(NSLayoutConstraint.init(item: button, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 20.0))
                 button.addConstraint(NSLayoutConstraint.init(item: button, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 20.0))
-                button.tile = self.modelGrid?.getTileAtPosition(positionX: i, positionY: j)
+                let tile = self.modelGrid?.getTileAtPosition(positionX: i, positionY: j)
+                button.tile = tile
                 columnButtons.append(button)
             }
             gridView.addRow(with: columnButtons)
@@ -79,6 +80,20 @@ class ViewController: NSViewController
         }
     }
     
+    func updateRevealed() {
+        // This function should probably be replaced by some kind of observing mecanism on the isRevealed property of tile.
+        // But for a first iteration it should be fine.
+        for i in 0...numberOfRows - 1 {
+            for j in 0...numberOfColumns -  1 {
+                let gridView: NSGridView = self.view as! NSGridView
+                let button = gridView.cell(atColumnIndex: j, rowIndex: i).contentView as! MSButton
+                if (button.tile?.isRevealed)! {
+                    button.title = String.init(format: "%d", (button.tile?.numberOfAdjacentBomb)!)
+                }
+            }
+        }
+    }
+    
     @IBAction func clicButton(_ sender: MSButton) {
         let tile = sender.tile
         if !(tile?.isFlagged)! {
@@ -90,9 +105,10 @@ class ViewController: NSViewController
             if (tile?.isBomb)! {
                 sender.title = "B"
             }
-            else {
+            else if !(tile?.isRevealed)! {
                 sender.title = String.init(format: "%d", tile!.numberOfAdjacentBomb)
-                sender.tile?.isRevealed = true
+                self.modelGrid?.revealTile(tile: tile)
+                self.updateRevealed()
             }
         }
     }
