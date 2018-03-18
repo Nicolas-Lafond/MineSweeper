@@ -18,6 +18,30 @@ class MSTile : NSObject
         self.positionY = positionY
     }
     
+    func getNumberColor() -> NSColor {
+        switch self.numberOfAdjacentBomb
+        {
+        case 1:
+            return NSColor.blue
+        case 2:
+            return NSColor.green
+        case 3:
+            return NSColor.red
+        case 4:
+            return NSColor.purple
+        case 5:
+            return NSColor.brown
+        case 6:
+            return NSColor.magenta
+        case 7:
+            return NSColor.black
+        case 8:
+            return NSColor.gray
+        default:
+            return NSColor.black
+        }
+    }
+    
     var isBomb: Bool
     var isRevealed: Bool
     var isFlagged = false
