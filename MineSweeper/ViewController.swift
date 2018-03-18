@@ -10,19 +10,20 @@ import Cocoa
 
 let numberOfRows = 20
 let numberOfColumns = 20
-let numberOfBombs = 30
+let numberOfBombs = 50
 var bombsAreSet = false
+var gameIsOver = true
 
 class MSButton: NSButton
 {
     override func mouseDown(with event: NSEvent) {
-        if !(self.tile?.isFlagged)! {
+        if !gameIsOver && !(self.tile?.isFlagged)! && !(self.tile?.isRevealed)! {
             super.mouseDown(with: event)
         }
     }
     
     override func rightMouseDown(with event: NSEvent) {
-        if (self.tile?.isRevealed)! {
+        if gameIsOver || (self.tile?.isRevealed)! {
             return
         }
         else if (self.tile?.isFlagged)! {
@@ -30,7 +31,7 @@ class MSButton: NSButton
             self.tile?.isFlagged = false
         }
         else {
-            self.image = NSImage.init(named: NSImage.Name(rawValue: "flag"))
+            self.image = #imageLiteral(resourceName: "flag")
             self.tile?.isFlagged = true
         }
         
@@ -42,6 +43,8 @@ class MSButton: NSButton
 class ViewController: NSViewController
 {
     var modelGrid: MSGrid?
+    @IBOutlet var gridView: NSGridView?
+    @IBOutlet var newGameButton: NSButton?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,7 +55,7 @@ class ViewController: NSViewController
         self.modelGrid = MSGrid(numberOfBombs: numberOfBombs, numberOfRows: numberOfRows, numberOfColumns: numberOfColumns)
         
         // Create the buttons grid
-        let gridView: NSGridView = self.view as! NSGridView
+        let gridView: NSGridView? = self.gridView
         for i in 1...numberOfRows {
             var columnButtons: [MSButton] = []
             for j in 1...numberOfColumns {
@@ -66,12 +69,13 @@ class ViewController: NSViewController
                 button.tile = tile
                 columnButtons.append(button)
             }
-            gridView.addRow(with: columnButtons)
+            gridView?.addRow(with: columnButtons)
         }
-        gridView.rowSpacing = 0.0
-        gridView.columnSpacing = 0.0
-        gridView.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        gridView.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        gridView?.rowSpacing = 0.0
+        gridView?.columnSpacing = 0.0
+        gridView?.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        gridView?.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        gameIsOver = false
     }
 
     override var representedObject: Any? {
@@ -85,7 +89,7 @@ class ViewController: NSViewController
         // But for a first iteration it should be fine.
         for i in 0...numberOfRows - 1 {
             for j in 0...numberOfColumns -  1 {
-                let gridView: NSGridView = self.view as! NSGridView
+                let gridView: NSGridView = (self.gridView)!
                 let button = gridView.cell(atColumnIndex: j, rowIndex: i).contentView as! MSButton
                 if (button.tile?.isRevealed)! {
                     button.title = String.init(format: "%d", (button.tile?.numberOfAdjacentBomb)!)
@@ -94,6 +98,23 @@ class ViewController: NSViewController
         }
     }
     
+    func newGame() {
+        gameIsOver = false
+        self.newGameButton?.image = #imageLiteral(resourceName: "Smile")
+        self.modelGrid = MSGrid(numberOfBombs: numberOfBombs, numberOfRows: numberOfRows, numberOfColumns: numberOfColumns)
+        bombsAreSet = false
+        for i in 1...numberOfRows {
+            for j in 1...numberOfColumns {
+                let button = self.gridView?.cell(atColumnIndex: j - 1, rowIndex: i - 1).contentView as? MSButton
+                button?.tile = self.modelGrid?.getTileAtPosition(positionX: i, positionY: j)
+                button?.image = nil
+                button?.title = ""
+            }
+        }
+        
+    }
+    
+    // MARK: Actions
     @IBAction func clicButton(_ sender: MSButton) {
         let tile = sender.tile
         if !(tile?.isFlagged)! {
@@ -103,7 +124,11 @@ class ViewController: NSViewController
                 self.modelGrid?.generateNumbersOfAdjacentBombs()
             }
             if (tile?.isBomb)! {
-                sender.title = "B"
+                sender.image = #imageLiteral(resourceName: "Bomb")
+                sender.imagePosition = .imageOnly
+                sender.imageScaling = .scaleAxesIndependently
+                self.newGameButton?.image = #imageLiteral(resourceName: "Sad")
+                gameIsOver = true
             }
             else if !(tile?.isRevealed)! {
                 sender.title = String.init(format: "%d", tile!.numberOfAdjacentBomb)
@@ -111,6 +136,10 @@ class ViewController: NSViewController
                 self.updateRevealed()
             }
         }
+    }
+    
+    @IBAction func clicNewGame(_ sender: NSButton) {
+        self.newGame()
     }
 }
 

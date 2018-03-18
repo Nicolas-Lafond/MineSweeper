@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -705,14 +706,61 @@
         <scene sceneID="hIz-AP-VOD">
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="MineSweeper" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" autoresizesSubviews="NO" wantsLayer="YES" id="m2S-Jp-Qdl" customClass="NSGridView">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                    <view key="view" autoresizesSubviews="NO" wantsLayer="YES" id="m2S-Jp-Qdl">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="240"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <box boxType="custom" cornerRadius="4" title="Box" translatesAutoresizingMaskIntoConstraints="NO" id="1gd-HU-IOV">
+                                <rect key="frame" x="0.0" y="200" width="480" height="40"/>
+                                <view key="contentView" id="hBo-Vg-3mw">
+                                    <rect key="frame" x="1" y="1" width="478" height="38"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="yfb-0G-582">
+                                            <rect key="frame" x="205" y="1" width="68" height="32"/>
+                                            <buttonCell key="cell" type="push" bezelStyle="rounded" image="Smile" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="O5h-ht-hLX">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="clicNewGame:" target="XfG-lQ-9wD" id="fAg-1K-xFO"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="yfb-0G-582" firstAttribute="centerY" secondItem="hBo-Vg-3mw" secondAttribute="centerY" id="c1q-gN-Wwl"/>
+                                        <constraint firstItem="yfb-0G-582" firstAttribute="centerX" secondItem="hBo-Vg-3mw" secondAttribute="centerX" id="o6z-XC-Ji2"/>
+                                    </constraints>
+                                </view>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="G2o-ph-niF"/>
+                                </constraints>
+                            </box>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="V5n-vl-83C" customClass="NSGridView">
+                                <rect key="frame" x="0.0" y="0.0" width="480" height="200"/>
+                            </customView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="1gd-HU-IOV" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="0Cg-1e-DuW"/>
+                            <constraint firstAttribute="trailing" secondItem="1gd-HU-IOV" secondAttribute="trailing" id="EAN-kQ-lUp"/>
+                            <constraint firstItem="1gd-HU-IOV" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="EjZ-NF-dev"/>
+                            <constraint firstItem="V5n-vl-83C" firstAttribute="top" secondItem="1gd-HU-IOV" secondAttribute="bottom" id="eAS-kG-PFe"/>
+                            <constraint firstAttribute="trailing" secondItem="V5n-vl-83C" secondAttribute="trailing" id="kCy-iK-GFx"/>
+                            <constraint firstItem="V5n-vl-83C" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="shx-ry-VvW"/>
+                            <constraint firstAttribute="bottom" secondItem="V5n-vl-83C" secondAttribute="bottom" id="xG6-4k-96M"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="gridView" destination="V5n-vl-83C" id="79e-rm-5AD"/>
+                        <outlet property="newGameButton" destination="yfb-0G-582" id="4Ac-oy-yPK"/>
+                    </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="75" y="655"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Smile" width="32" height="32"/>
+    </resources>
 </document>
