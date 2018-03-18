@@ -84,6 +84,21 @@ class ViewController: NSViewController
         }
     }
     
+    func gameOver() {
+        self.newGameButton?.image = #imageLiteral(resourceName: "Sad")
+        gameIsOver = true
+        for i in 0...numberOfRows - 1 {
+            for j in 0...numberOfColumns -  1 {
+                let gridView: NSGridView = (self.gridView)!
+                let button = gridView.cell(atColumnIndex: j, rowIndex: i).contentView as! MSButton
+                if (button.tile?.isBomb)! && !(button.tile?.isFlagged)! {
+                    button.image = #imageLiteral(resourceName: "Bomb")
+                    button.imageScaling = .scaleAxesIndependently
+                }
+            }
+        }
+    }
+    
     func updateRevealed() {
         // This function should probably be replaced by some kind of observing mecanism on the isRevealed property of tile.
         // But for a first iteration it should be fine.
@@ -111,7 +126,6 @@ class ViewController: NSViewController
                 button?.title = ""
             }
         }
-        
     }
     
     // MARK: Actions
@@ -127,8 +141,7 @@ class ViewController: NSViewController
                 sender.image = #imageLiteral(resourceName: "Bomb")
                 sender.imagePosition = .imageOnly
                 sender.imageScaling = .scaleAxesIndependently
-                self.newGameButton?.image = #imageLiteral(resourceName: "Sad")
-                gameIsOver = true
+                self.gameOver()
             }
             else if !(tile?.isRevealed)! {
                 sender.title = String.init(format: "%d", tile!.numberOfAdjacentBomb)
