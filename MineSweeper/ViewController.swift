@@ -32,6 +32,7 @@ class MSButton: NSButton
         }
         else {
             self.image = #imageLiteral(resourceName: "flag")
+            self.imageScaling = .scaleAxesIndependently
             self.tile?.isFlagged = true
         }
         
@@ -60,6 +61,7 @@ class ViewController: NSViewController
             var columnButtons: [MSButton] = []
             for j in 1...numberOfColumns {
                 let button = MSButton()
+                button.bezelStyle = .shadowlessSquare
                 button.title = ""
                 button.target = self
                 button.action = #selector(ViewController.clicButton(_:))
@@ -107,7 +109,8 @@ class ViewController: NSViewController
                 let gridView: NSGridView = (self.gridView)!
                 let button = gridView.cell(atColumnIndex: j, rowIndex: i).contentView as! MSButton
                 if (button.tile?.isRevealed)! {
-                    button.title = String.init(format: "%d", (button.tile?.numberOfAdjacentBomb)!)
+                    button.title = ((button.tile?.numberOfAdjacentBomb)! > 0) ? String.init(format: "%d", (button.tile?.numberOfAdjacentBomb)!) : ""
+                    button.bezelStyle = .smallSquare
                 }
             }
         }
@@ -124,6 +127,7 @@ class ViewController: NSViewController
                 button?.tile = self.modelGrid?.getTileAtPosition(positionX: i, positionY: j)
                 button?.image = nil
                 button?.title = ""
+                button?.bezelStyle = .shadowlessSquare
             }
         }
     }
@@ -144,7 +148,8 @@ class ViewController: NSViewController
                 self.gameOver()
             }
             else if !(tile?.isRevealed)! {
-                sender.title = String.init(format: "%d", tile!.numberOfAdjacentBomb)
+                sender.title = (tile!.numberOfAdjacentBomb > 0) ? String.init(format: "%d", tile!.numberOfAdjacentBomb) : ""
+                sender.bezelStyle = .smallSquare
                 self.modelGrid?.revealTile(tile: tile)
                 self.updateRevealed()
             }
