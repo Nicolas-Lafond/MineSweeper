@@ -154,6 +154,10 @@ class MSGrid : NSObject
         }
     }
     
+    func gameIsOver() -> Bool {
+        return self.getNumberOfRemainingTilesToReveal() == 0
+    }
+    
     var tiles: [[MSTile]]
     let numberOfBombs: Int
     let numberOfRows: Int

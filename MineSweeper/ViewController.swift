@@ -191,6 +191,11 @@ class ViewController: NSViewController
                 sender.bezelStyle = .smallSquare
                 self.modelGrid?.revealTile(tile: tile)
                 self.updateRevealed()
+                if self.modelGrid!.gameIsOver() { // The player won the game
+                    self.newGameButton?.image = #imageLiteral(resourceName: "Happy")
+                    gameIsOver = true
+                    self.timer?.invalidate()
+                }
             }
         }
     }
