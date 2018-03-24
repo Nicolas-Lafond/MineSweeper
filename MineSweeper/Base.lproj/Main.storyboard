@@ -726,9 +726,31 @@
                                                 <action selector="clicNewGame:" target="XfG-lQ-9wD" id="fAg-1K-xFO"/>
                                             </connections>
                                         </button>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Xi8-Ji-r2i">
+                                            <rect key="frame" x="20" y="11" width="29" height="17"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="099" id="TFV-Xf-GYA">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="08B-jW-ci8">
+                                            <rect key="frame" x="429" y="11" width="29" height="17"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="000" id="mXv-pc-JfH">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
                                     </subviews>
                                     <constraints>
+                                        <constraint firstItem="Xi8-Ji-r2i" firstAttribute="centerY" secondItem="hBo-Vg-3mw" secondAttribute="centerY" id="04o-Gl-uhx"/>
+                                        <constraint firstItem="08B-jW-ci8" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="hBo-Vg-3mw" secondAttribute="leading" constant="20" symbolic="YES" id="0OZ-YN-xze"/>
+                                        <constraint firstAttribute="trailing" secondItem="08B-jW-ci8" secondAttribute="trailing" constant="22" id="RXw-2a-zoa"/>
+                                        <constraint firstItem="08B-jW-ci8" firstAttribute="centerY" secondItem="hBo-Vg-3mw" secondAttribute="centerY" id="X4m-UR-j8D"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Xi8-Ji-r2i" secondAttribute="trailing" constant="20" symbolic="YES" id="aq8-lC-DRl"/>
                                         <constraint firstItem="yfb-0G-582" firstAttribute="centerY" secondItem="hBo-Vg-3mw" secondAttribute="centerY" id="c1q-gN-Wwl"/>
+                                        <constraint firstItem="Xi8-Ji-r2i" firstAttribute="leading" secondItem="hBo-Vg-3mw" secondAttribute="leading" constant="22" id="m34-B3-H0j"/>
                                         <constraint firstItem="yfb-0G-582" firstAttribute="centerX" secondItem="hBo-Vg-3mw" secondAttribute="centerX" id="o6z-XC-Ji2"/>
                                     </constraints>
                                 </view>
@@ -753,6 +775,8 @@
                     <connections>
                         <outlet property="gridView" destination="V5n-vl-83C" id="79e-rm-5AD"/>
                         <outlet property="newGameButton" destination="yfb-0G-582" id="4Ac-oy-yPK"/>
+                        <outlet property="numberOfBombsLeftLabel" destination="Xi8-Ji-r2i" id="xrU-ZP-H1x"/>
+                        <outlet property="timerLabel" destination="08B-jW-ci8" id="okL-Hf-fkZ"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

@@ -29,11 +29,15 @@ class MSButton: NSButton
         else if (self.tile?.isFlagged)! {
             self.image = nil
             self.tile?.isFlagged = false
+            let viewController = self.target as! ViewController
+            viewController.numberOfBombsLeftLabel?.intValue += 1
         }
         else {
             self.image = #imageLiteral(resourceName: "flag")
             self.imageScaling = .scaleAxesIndependently
             self.tile?.isFlagged = true
+            let viewController = self.target as! ViewController
+            viewController.numberOfBombsLeftLabel?.intValue -= 1
         }
         
     }
@@ -44,40 +48,16 @@ class MSButton: NSButton
 class ViewController: NSViewController
 {
     var modelGrid: MSGrid?
+    var timer: Timer?
+    var gridIsCreated = false
     @IBOutlet var gridView: NSGridView?
     @IBOutlet var newGameButton: NSButton?
+    @IBOutlet var timerLabel: NSTextField?
+    @IBOutlet var numberOfBombsLeftLabel: NSTextField?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-        
-        // Create the model
-        self.modelGrid = MSGrid(numberOfBombs: numberOfBombs, numberOfRows: numberOfRows, numberOfColumns: numberOfColumns)
-        
-        // Create the buttons grid
-        let gridView: NSGridView? = self.gridView
-        for i in 1...numberOfRows {
-            var columnButtons: [MSButton] = []
-            for j in 1...numberOfColumns {
-                let button = MSButton()
-                button.bezelStyle = .shadowlessSquare
-                button.title = ""
-                button.target = self
-                button.action = #selector(ViewController.clicButton(_:))
-                button.addConstraint(NSLayoutConstraint.init(item: button, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 20.0))
-                button.addConstraint(NSLayoutConstraint.init(item: button, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 20.0))
-                let tile = self.modelGrid?.getTileAtPosition(positionX: i, positionY: j)
-                button.tile = tile
-                columnButtons.append(button)
-            }
-            gridView?.addRow(with: columnButtons)
-        }
-        gridView?.rowSpacing = 0.0
-        gridView?.columnSpacing = 0.0
-        gridView?.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        gridView?.setContentHuggingPriority(.defaultHigh, for: .vertical)
-        gameIsOver = false
+        self.newGame()
     }
 
     override var representedObject: Any? {
@@ -89,6 +69,7 @@ class ViewController: NSViewController
     func gameOver() {
         self.newGameButton?.image = #imageLiteral(resourceName: "Sad")
         gameIsOver = true
+        self.timer?.invalidate()
         for i in 0...numberOfRows - 1 {
             for j in 0...numberOfColumns -  1 {
                 let gridView: NSGridView = (self.gridView)!
@@ -116,10 +97,39 @@ class ViewController: NSViewController
         }
     }
     
+    func createGrid() {
+        if self.gridIsCreated { return; }
+        let gridView: NSGridView? = self.gridView
+        for i in 1...numberOfRows {
+            var columnButtons: [MSButton] = []
+            for j in 1...numberOfColumns {
+                let button = MSButton()
+                button.bezelStyle = .shadowlessSquare
+                button.title = ""
+                button.target = self
+                button.action = #selector(ViewController.clicButton(_:))
+                button.addConstraint(NSLayoutConstraint.init(item: button, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 20.0))
+                button.addConstraint(NSLayoutConstraint.init(item: button, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 20.0))
+                let tile = self.modelGrid?.getTileAtPosition(positionX: i, positionY: j)
+                button.tile = tile
+                columnButtons.append(button)
+            }
+            gridView?.addRow(with: columnButtons)
+        }
+        gridView?.rowSpacing = 0.0
+        gridView?.columnSpacing = 0.0
+        gridView?.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        gridView?.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        self.gridIsCreated = true
+    }
+    
     func newGame() {
+        self.timerLabel?.integerValue = 0
+        self.numberOfBombsLeftLabel?.integerValue = numberOfBombs
         gameIsOver = false
         self.newGameButton?.image = #imageLiteral(resourceName: "Smile")
         self.modelGrid = MSGrid(numberOfBombs: numberOfBombs, numberOfRows: numberOfRows, numberOfColumns: numberOfColumns)
+        self.createGrid()
         bombsAreSet = false
         for i in 1...numberOfRows {
             for j in 1...numberOfColumns {
@@ -130,16 +140,26 @@ class ViewController: NSViewController
                 button?.bezelStyle = .shadowlessSquare
             }
         }
+        self.timer?.invalidate()
+    }
+    
+    @objc func updateTimer() {
+        if let time = self.timerLabel?.integerValue {
+            if time < 999 {
+                self.timerLabel?.integerValue = time + 1
+            }
+        }
     }
     
     // MARK: Actions
     @IBAction func clicButton(_ sender: MSButton) {
         let tile = sender.tile
         if !(tile?.isFlagged)! {
-            if !bombsAreSet {
+            if !bombsAreSet { // First click on a tile of the game
                 bombsAreSet = true
                 self.modelGrid?.generateBombs(positionX: tile!.positionX, positionY: tile!.positionY)
                 self.modelGrid?.generateNumbersOfAdjacentBombs()
+                self.timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector:#selector(updateTimer), userInfo: nil, repeats: true)
             }
             if (tile?.isBomb)! {
                 sender.image = #imageLiteral(resourceName: "Bomb")
