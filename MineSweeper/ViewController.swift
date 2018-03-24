@@ -16,6 +16,23 @@ var gameIsOver = true
 
 class MSButton: NSButton
 {
+    var redBackground = false
+    
+    override func draw(_ dirtyRect: NSRect) {
+        if (redBackground) {
+            NSGraphicsContext.saveGraphicsState()
+            NSColor.red.setFill()
+            let path = NSBezierPath(rect: dirtyRect)
+            path.fill()
+            let image = #imageLiteral(resourceName: "Bomb")
+            image.draw(in: dirtyRect)
+            NSGraphicsContext.restoreGraphicsState()
+        }
+        else {
+            super.draw(dirtyRect)
+        }
+    }
+    
     override func mouseDown(with event: NSEvent) {
         if !gameIsOver && !(self.tile?.isFlagged)! && !(self.tile?.isRevealed)! {
             super.mouseDown(with: event)
@@ -138,6 +155,7 @@ class ViewController: NSViewController
                 button?.image = nil
                 button?.title = ""
                 button?.bezelStyle = .shadowlessSquare
+                button?.redBackground = false
             }
         }
         self.timer?.invalidate()
@@ -163,6 +181,7 @@ class ViewController: NSViewController
             }
             if (tile?.isBomb)! {
                 sender.image = #imageLiteral(resourceName: "Bomb")
+                sender.redBackground = true
                 sender.imagePosition = .imageOnly
                 sender.imageScaling = .scaleAxesIndependently
                 self.gameOver()
