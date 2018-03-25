@@ -106,9 +106,17 @@ class ViewController: NSViewController
             for j in 0...numberOfColumns -  1 {
                 let gridView: NSGridView = (self.gridView)!
                 let button = gridView.cell(atColumnIndex: j, rowIndex: i).contentView as! MSButton
-                if (button.tile?.isRevealed)! {
-                    button.title = ((button.tile?.numberOfAdjacentBomb)! > 0) ? String.init(format: "%d", (button.tile?.numberOfAdjacentBomb)!) : ""
-                    button.bezelStyle = .smallSquare
+                if let tile = button.tile {
+                    if tile.isRevealed {
+                        let title = (tile.numberOfAdjacentBomb > 0) ? String.init(format: "%d", (button.tile?.numberOfAdjacentBomb)!) : ""
+                        let color = tile.getNumberColor()
+                        let paragraphStyle = NSMutableParagraphStyle.default.mutableCopy() as! NSMutableParagraphStyle
+                        paragraphStyle.alignment = .center
+                        let font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize(for: .regular))
+                        let attrTitle = NSAttributedString.init(string: title, attributes: [.foregroundColor : color, .font : font, .paragraphStyle : paragraphStyle])
+                        button.attributedTitle = attrTitle
+                            button.bezelStyle = .smallSquare
+                    }
                 }
             }
         }
